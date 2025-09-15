@@ -1,0 +1,113 @@
+.landing-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6e8efb, #a777e3 80%);
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.main-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.animated-gradient {
+  background: linear-gradient(90deg, #ffb347, #6e8efb, #a777e3, #ffb347);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientMove 3s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 2em;
+  opacity: 0.85;
+}
+
+.fade-in {
+  animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 0.85; transform: translateY(0);}
+}
+
+.counter-section {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 2em;
+}
+
+.counter-label {
+  font-size: 1.1rem;
+}
+
+.counter-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: rgba(255,255,255,0.2);
+  padding: 0.3em 1em;
+  border-radius: 8px;
+}
+
+.animated-btn {
+  background: #fff;
+  color: #6e8efb;
+  border: none;
+  padding: 0.7em 1.5em;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.2s, background 0.2s;
+}
+.animated-btn:hover {
+  background: #a777e3;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.cta-section {
+  margin-top: 2em;
+}
+
+.glow-btn {
+  background: #ffb347;
+  color: #fff;
+  border: none;
+  padding: 1em 2em;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 20px 5px #ffb34788, 0 2px 12px rgba(0,0,0,0.18);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  animation: glow 2s infinite alternate;
+}
+.glow-btn:hover {
+  background: #ffcc80;
+  color: #6e8efb;
+  transform: scale(1.08);
+  box-shadow: 0 0 30px 10px #ffb347cc, 0 2px 12px rgba(0,0,0,0.18);
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px 5px #ffb34788; }
+  to { box-shadow: 0 0 30px 10px #ffb347cc; }
+}

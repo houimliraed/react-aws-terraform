@@ -1,0 +1,29 @@
+# Node modules
+front/node_modules/
+# Build output
+front/dist/
+front/build/
+# Environment files
+front/.env
+front/.env.local
+front/.env.development.local
+front/.env.test.local
+front/.env.production.local
+# Log files
+front/npm-debug.log*
+front/yarn-debug.log*
+front/yarn-error.log*
+# OS files
+front/.DS_Store
+front/Thumbs.db
+# Vite cache
+front/.vite/
+# Misc
+front/*.log
+front/*.lock
+front/package-lock.json
+# Ignore coverage reports
+front/coverage/
+# Ignore IDE files
+front/.vscode/
+front/.idea/
