@@ -1,0 +1,30 @@
+
+name: Test
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:        
+
+
+jobs:
+    test_lint_build: 
+        runs-on: ubuntu-latest
+        steps:
+            - name: log_message
+              run: echo "workflow started"
+            - name: code checkout
+              uses: actions/checkout@v3
+            - name: setup_node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '22'
+            - name: install dependencies      
+              run: npm install
+            - name: run linter
+              run: npm run lint
+            - name: run test
+              run: npm test -- --watchAll=false
+            - name: build production files
+              run: npm run build
