@@ -1,4 +1,3 @@
-
 name: Test
 
 on:
@@ -22,9 +21,16 @@ jobs:
                   node-version: '22'
             - name: install dependencies      
               run: npm install
+              working-directory: front
+
             - name: run linter
               run: npm run lint
+              working-directory: front
+
             - name: run test
               run: npm test -- --watchAll=false
+              working-directory: front
+
             - name: build production files
               run: npm run build
+              working-directory: front
