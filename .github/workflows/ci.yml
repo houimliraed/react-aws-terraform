@@ -1,36 +1,22 @@
-name: Test
+
+
+name: aws checks
+
 
 on:
     push:
         branches:
             - main
-    workflow_dispatch:        
-
+    workflow_dispatch:
 
 jobs:
-    test_lint_build: 
-        runs-on: ubuntu-latest
-        steps:
-            - name: log_message
-              run: echo "workflow started"
-            - name: code checkout
-              uses: actions/checkout@v3
-            - name: setup_node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '22'
-            - name: install dependencies      
-              run: npm install
-              working-directory: front
-
-            - name: run linter
-              run: npm run lint
-              working-directory: front
-
-            - name: run test
-              run: npm test -- --watchAll=false
-              working-directory: front
-
-            - name: build production files
-              run: npm run build
-              working-directory: front
+    aws_login:
+      runs-on: ubuntu-latest
+      steps:
+        - name: login
+          uses: aws-actions/configure-aws-credentials@v5.0.0
+          with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.IAM_ROLE }}
+        - name: list all s3 buckets
+          run: aws s3 ls

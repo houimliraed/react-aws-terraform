@@ -21,7 +21,6 @@ front/.vite/
 # Misc
 front/*.log
 front/*.lock
-front/package-lock.json
 # Ignore coverage reports
 front/coverage/
 # Ignore IDE files
