@@ -1,7 +1,6 @@
 
 
-name: aws checks
-
+name: ci
 
 on:
     push:
@@ -9,20 +8,16 @@ on:
             - main
     workflow_dispatch:
 
-permissions:
-  id-token: write   #  requesting the JWT
-  contents: read    #  required for actions/checkout
-
 jobs:
-    aws_login:
-      runs-on: ubuntu-latest
-      steps:
-        - name: login
-          uses: aws-actions/configure-aws-credentials@v5.0.0
-          with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.IAM_ROLE }}
-        - name: list all s3 buckets
-          env:
-            AWS-REGION: ${{ secrets.AWS_REGION }}
-          run: aws s3 ls
+    test-lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: aws login 
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                role-to-assume: ${{secrets.IAM_ROLE}}
+                aws-region: ${{secrets.AWS_REGION}}
+            - name: test user
+              run: aws sts get-caller-identity
+
+
