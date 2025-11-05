@@ -20,7 +20,6 @@ front/Thumbs.db
 front/.vite/
 # Misc
 front/*.log
-front/*.lock
 # Ignore coverage reports
 front/coverage/
 # Ignore IDE files
