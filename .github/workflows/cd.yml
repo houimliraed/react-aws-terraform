@@ -1,37 +1,45 @@
-
 on:
-    workflow_run:
-        workflows: [ci]
-        types:
-            - completed
-
+  workflow_run:
+    workflows: ["ci"]
+    types:
+      - completed
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        permissions:
-            id-token: write
-            contents: read
-            
-        steps:
-            - name: aws login
-              uses: aws-actions/configure-aws-credentials@v5.1.0
-              with:
-                role-to-assume: ${{ secrets.IAM_ROLE }}
-                aws-region: ${{ secrets.AWS_REGION }}
-            - name: terraform install
-              uses: hashicorp/setup-terraform@v3
-              with:
-                terraform_version: 1.9.8
-            - name: terraform init
-              run: terraform init
-              working-directory: ./terraform
-            - name: terraform apply 
-              env:
-                TF_VAR_bucket_name: ${{secrets.BUCKET_NAME}}
-              run: terraform apply -auto-approve
-              working-directory: ./terraform
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.0
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        env:
+          TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
+        run: terraform plan -input=false -lock=false -out=tfplan
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./terraform
