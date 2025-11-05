@@ -1,6 +1,6 @@
 
 
-resource "aws-s3-bucket" "reactapp" {
+resource "aws_s3_bucket" "reactapp" {
 
     bucket = var.mybucket
   
