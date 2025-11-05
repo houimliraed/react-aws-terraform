@@ -1,15 +1,20 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
 
-
-provider "aws" {
-  
+  backend "s3" {
+    bucket         = "tf-ressources-gha"
+    key            = "github-actions/terraform.tfstate"
+    region         = "eu-west-3"
+    encrypt        = true
+    use_lockfile   = true  
+  }
 }
 
-terraform {
-  backend "s3" {
-    bucket = "tf-ressources-gha"
-    region = "eu-west-3"
-    key = "github-actions/terraform.tfstate"
-    encrypt = true
-    dynamodb_table = "tf-ressources-gha-lock"
-  }
+provider "aws" {
+  region = "eu-west-3"
 }
