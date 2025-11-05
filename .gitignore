@@ -26,3 +26,4 @@ front/coverage/
 # Ignore IDE files
 front/.vscode/
 front/.idea/
+terraform/.terraform/*

@@ -1,5 +1,4 @@
 
-
 name: ci
 
 on:
@@ -15,12 +14,47 @@ jobs:
             id-token: write
             contents: read
         steps:
-            - name: aws login 
-              uses: aws-actions/configure-aws-credentials@v4
+            - name: code checkout
+              uses: actions/checkout@v5
+
+            - name: install node JS
+              uses: actions/setup-node@v6
+              with: 
+                node-version: 22
+                cache: "npm"
+            - name: install dependencies
+              run: npm ci
+            - name: run linting
+              run: npm run lint
+            - name: run testing
+              run: npm run test
+            - name: build
+              run: npm run build
+            - name: login-to-aws
+              uses: aws-actions/configure-aws-credentials@v5.1.0
               with:
-                role-to-assume: ${{secrets.IAM_ROLE}}
-                aws-region: ${{secrets.AWS_REGION}}
-            - name: test user
-              run: aws sts get-caller-identity
+                role-to-assume: ${{ secrets.IAM_ROLE }}
+                aws-region: ${{ secrets.AWS_REGION }}
+
+            - name: install terraform
+              uses: hashicorp/setup-terraform@v3
+            - name: terraform initialiaze
+              run: terraform init
+              working-directory: terraform
+            - name: terraform plan
+              env:
+                BUCKET_NAME: ${{secrets.BUCKET_NAME}}
+              run: |
+                terraform plan \
+                -var="bucket_name=$BUCKET_NAME"
+              working-directory: terraform
+            - name: run terraform
+              run: terraform plan
+              
+
+
+
+              
+
 
 

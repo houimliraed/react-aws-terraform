@@ -1,0 +1,35 @@
+
+on:
+    workflow_run:
+        workflows: [ci]
+        types:
+            - completed
+
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: read
+            
+        steps:
+            - name: aws login
+              uses: aws-actions/configure-aws-credentials@v5.1.0
+              with:
+                role-to-assume: ${{ secrets.IAM_ROLE }}
+                aws-region: ${{ secrets.AWS_REGION }}
+            - name: terraform install
+              uses: hashicorp/setup-terraform@v3
+            - name: terraform init
+              run: terraform init
+              working-directory: terraform
+            - name: terraform apply 
+              env:
+                TF_VAR_bucket_name: ${{secrets.BUCKET_NAME}}
+              run: terraform apply -auto-approve
+              working-directory: terraform
+
+
+
+    
