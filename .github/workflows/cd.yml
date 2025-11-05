@@ -21,14 +21,16 @@ jobs:
                 aws-region: ${{ secrets.AWS_REGION }}
             - name: terraform install
               uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: 1.9.8
             - name: terraform init
               run: terraform init
-              working-directory: terraform
+              working-directory: ./terraform
             - name: terraform apply 
               env:
                 TF_VAR_bucket_name: ${{secrets.BUCKET_NAME}}
               run: terraform apply -auto-approve
-              working-directory: terraform
+              working-directory: ./terraform
 
 
 
