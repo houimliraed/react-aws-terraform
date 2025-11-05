@@ -44,14 +44,14 @@ jobs:
             - name: install terraform
               uses: hashicorp/setup-terraform@v3
             - name: terraform initialiaze
-              run: terraform init
+              run: terraform init -input=false
               working-directory: terraform
             - name: terraform plan
               env:
                 BUCKET_NAME: ${{secrets.BUCKET_NAME}}
               run: |
-                terraform plan \
-                -var="bucket_name=$my_bucket"
+                terraform plan -input=false -lock=false \
+                -var="bucket_name=$BUCKET_NAME"
               working-directory: terraform
             - name: run terraform
               run: terraform plan
