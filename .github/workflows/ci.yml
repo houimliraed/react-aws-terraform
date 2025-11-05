@@ -55,7 +55,12 @@ jobs:
                 terraform plan -input=false -lock=false \
                 -var="bucket_name=$BUCKET_NAME"
               working-directory: ./terraform
-              
+            - name: upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: react-build
+                path: front/dist
+                            
 
 
 
