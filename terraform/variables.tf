@@ -1,6 +1,4 @@
-
-variable "BUCKET_NAME" {
-    description = "this is the bucket name"
-    type = string
-  
+variable "bucket_name" {
+  description = "S3 bucket name for Terraform state or app"
+  type        = string
 }
