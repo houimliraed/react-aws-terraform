@@ -22,14 +22,19 @@ jobs:
               with: 
                 node-version: 22
                 cache: "npm"
+                cache-dependency-path: front/package-lock.json
             - name: install dependencies
               run: npm ci
+              working-directory: front
             - name: run linting
               run: npm run lint
+              working-directory: front
             - name: run testing
               run: npm run test
+              working-directory: front
             - name: build
               run: npm run build
+              working-directory: front
             - name: login-to-aws
               uses: aws-actions/configure-aws-credentials@v5.1.0
               with:
