@@ -13,38 +13,52 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+    # 1. Checkout
+    - name: Checkout code
+      uses: actions/checkout@v5
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.0
-        with:
-          role-to-assume: ${{ secrets.IAM_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
+    # 2. Configure AWS
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v5.1.0
+      with:
+        role-to-assume: ${{ secrets.IAM_ROLE }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.8
+    # 3. Setup Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.9.8
 
-      - name: Terraform Init
-        run: terraform init -input=false
-        working-directory: ./terraform
+    # 4. Terraform Init
+    - name: Terraform Init
+      run: terraform init -input=false
+      working-directory: ./terraform
 
-      - name: Terraform Apply
-        if: ${{ github.ref == 'refs/heads/main' }}
-        env:
-          TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
-        run: terraform apply -auto-approve tfplan
-        working-directory: ./terraform
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: react-build
-          path: front/dist
-      
-      - name: Uploading files to the s3 bucket
-        env:
-          BUCKET_NAME: ${{secrets.BUCKET_NAME}}
-        run: |
-          aws s3 sync ./front/dist s3://$BUCKET_NAME --delete
+    # 5. Download Terraform Plan 
+    - name: Download Terraform Plan
+      uses: actions/download-artifact@v4
+      with:
+        name: terraform-plan
+        path: ./terraform
+
+    # 6. Terraform Apply
+    - name: Terraform Apply
+      if: ${{ github.ref == 'refs/heads/main' }}
+      env:
+        TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
+      run: terraform apply -auto-approve ./terraform/tfplan
+      working-directory: ./terraform
+
+    # 7. Download React build artifact
+    - name: Download React Build
+      uses: actions/download-artifact@v4
+      with:
+        name: react-build
+        path: ./front/dist
+
+    # 8. Deploy React to S3
+    - name: Uploading files to the S3 bucket
+      env:
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+      run: aws s3 sync ./front/dist s3://$BUCKET_NAME --delete
