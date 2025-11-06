@@ -7,10 +7,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "tf-ressources-gha"
-    key            = "github-actions/terraform.tfstate"
-    region         = "eu-west-3"
-    encrypt        = true
+    bucket  = "tf-ressources-gha"
+    key     = "github-actions/terraform.tfstate"
+    region  = "eu-west-3"
+    encrypt = true
   }
 }
 
