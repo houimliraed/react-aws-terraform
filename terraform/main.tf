@@ -46,3 +46,18 @@ resource "aws_s3_bucket_public_access_block" "react_app_access" {
 }
 
  */
+
+# creating the certificate resource
+
+ resource "aws_acm_certificate" "react_app_cert" {
+  domain_name       = "example.com"
+  validation_method = "DNS"
+
+  tags = {
+    Name = "my react app ssl cert"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
