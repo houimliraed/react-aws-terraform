@@ -37,7 +37,7 @@ resource "aws_s3_bucket_policy" "react_app_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = "s3:GetObject"
-        Resource  = "${aws.aws_s3_bucket.react_app.arn}/*"
+        Resource  = "${aws_s3_bucket.react_app.arn}/*"
       }
     ]
   })
