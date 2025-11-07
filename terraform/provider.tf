@@ -15,5 +15,5 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-3"
+  region = "us-east-1" # cloud front with acm only works on us-east-one region
 }
