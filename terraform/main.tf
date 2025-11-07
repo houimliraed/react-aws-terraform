@@ -41,11 +41,11 @@ resource "aws_s3_bucket" "react_app" {
 
 
 resource "aws_s3_bucket_public_access_block" "react_app_access" {
-    bucket = aws_s3_bucket.react_app.id
-    block_public_acls = true
-    block_public_policy = true
-    ignore_public_acls = true
-    restrict_public_buckets = true
+  bucket                  = aws_s3_bucket.react_app.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 
@@ -53,16 +53,21 @@ resource "aws_s3_bucket_public_access_block" "react_app_access" {
 
 resource "aws_acm_certificate" "react_app_cert" {
 
-    domain_name = "houimliraed.com"
-    validation_method = "DNS"
+  domain_name       = "houimliraed.com"
+  validation_method = "DNS"
 
-    tags = {
-      Name = "react_app SSL certificate"
-    }
+  tags = {
+    Name = "react_app SSL certificate"
+  }
 
-    lifecycle {
-      create_before_destroy = true
-    }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+data "aws_route53_record" "domain_zone" {
+    name = "houimliraed.com"
+  
 }
 
 resource "aws_route53_record" "react_app_cert_record" {
@@ -79,7 +84,7 @@ resource "aws_route53_record" "react_app_cert_record" {
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = aws_route53_zone.example.zone_id
+  zone_id         = data.aws_route53_record.domain_zone.zone_id
 }
 
 resource "aws_acm_certificate_validation" "react_app_cert_validation" {
@@ -88,3 +93,4 @@ resource "aws_acm_certificate_validation" "react_app_cert_validation" {
   validation_record_fqdns = [for record in aws_route53_record.react_app_cert_validation : record.fqdn]
 
 }
+
