@@ -50,5 +50,7 @@ jobs:
       - name: Terraform Destroy
         env:
           TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
-        run: terraform destroy -auto-approve || echo "Some resources may not exist, continuing..."
+        run: |
+          # Ignore errors for resources that might already be deleted
+          terraform destroy -auto-approve || echo "Some resources may not exist, continuing..."
         working-directory: terraform
