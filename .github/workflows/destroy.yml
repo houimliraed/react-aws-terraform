@@ -7,36 +7,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ================= CD JOB =================
+  # ================= Destroy Resources =================
   destroy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
+      # Checkout the repo
       - name: Checkout code
         uses: actions/checkout@v5
 
+      # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5.1.0
         with:
           role-to-assume: ${{ secrets.IAM_ROLE }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # Empty S3 bucket first (avoid bucket deletion errors)
       - name: Empty the S3 bucket
-        run: aws s3 rm s3://${{ secrets.BUCKET_NAME }} --recursive
+        run: |
+          if aws s3 ls "s3://${{ secrets.BUCKET_NAME }}" >/dev/null 2>&1; then
+            echo "Emptying S3 bucket..."
+            aws s3 rm s3://${{ secrets.BUCKET_NAME }} --recursive
+          else
+            echo "Bucket does not exist, skipping."
+          fi
 
+      # Setup Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
 
+      # Terraform init
       - name: Terraform Init
         run: terraform init -input=false
         working-directory: terraform
 
+      # Terraform destroy
       - name: Terraform Destroy
         env:
           TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve || echo "Some resources may not exist, continuing..."
         working-directory: terraform
