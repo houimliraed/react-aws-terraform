@@ -1,0 +1,48 @@
+name: Destroy
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+
+jobs:
+  # ================= CD JOB =================
+  destroy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.0
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Empty the S3 bucket
+        run: aws s3 rm s3://${{ secrets.BUCKET_NAME }} --recursive
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: terraform
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan
+          path: terraform
+
+      - name: Terraform Destroy
+        env:
+          TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
+        run: terraform destroy -auto-approve
+        working-directory: terraform
